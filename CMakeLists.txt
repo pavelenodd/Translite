@@ -14,6 +14,7 @@ qt_policy(SET QTP0001 NEW) # убираем нудный warning
 # Экзешник с другим именем, чтобы не конфликтовать с каталогом MinimalQml
 qt_add_executable(${PROJECT_NAME}
 	Src/main.cpp
+	Src/translate.cpp
 )
 
 qt_add_qml_module(${PROJECT_NAME}
