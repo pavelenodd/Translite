@@ -3,6 +3,7 @@ set(PROJECT_NAME MinimalQmlApp)
 
 project(${PROJECT_NAME} LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON) # Включаем автогенерацию moc файлов
 set(CMAKE_AUTORCC ON) # Включаем автогенерацию rcc опционально
 set(CMAKE_AUTOUIC ON) # Включаем автогенерацию uic опционально 

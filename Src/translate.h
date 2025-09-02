@@ -1,5 +1,7 @@
 #pragma once
+#include <algorithm>
 #include <string>
+#include <string_view>
 
 #include "data.h"
 
@@ -7,7 +9,7 @@ class Translate {
  private:
   std::string query_text;   // input text
   std::string result_text;  // output text(translated text)
-  Data data;                // storage for transliteration map
+  Data data_;               // storage for transliteration map
 
  public:
   void GetQueryText(const std::string& text) {
@@ -19,32 +21,44 @@ class Translate {
   }
 
   void Transliterate() {
-    std::string L_text = query_text;  // Копируем входной текст в результат
-
-    auto replace_rus_letters = [this](std::string& text) -> int {
-      int count = 0;
-      size_t i = 0;
-      while (i < text.size()) {
-        bool found = false;
-        for (auto& [c, weight] : data.rus_letter_weight) {
-          if (i + c.size() <= text.size() && text.substr(i, c.size()) == c) {
-            text.replace(i, c.size(), "");  // Заменяем букву на ""
-            count += weight;
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          i++;
+    // подсчёт веса сложных русских букв
+    auto count_rus_letters = [this](const std::string& text) -> int {
+      int count = text.size();
+      for (const auto& pair : data_.rus_letter_weight) {
+        const std::string& c = pair.first;
+        int weight = pair.second;
+        size_t pos = 0;
+        while ((pos = text.find(c, pos)) != std::string::npos) {
+          count += (weight - 1);  // -1 потому что буква уже учтена в размере строки
+          pos += c.size();
         }
       }
       return count;
     };
 
-    auto transliterate = [this](char c) -> std::string {};
+    auto transliterate = [this](std::string_view view_text) -> std::string {
+      std::string result;
+      for (size_t i = 0; i < view_text.size();) {
+        bool found = false;
+        for (const auto& [key, value] : data_.transliteration_map) {
+          if (i + key.size() <= view_text.size() && view_text.substr(i, key.size()) == key) {
+            result += value;
+            i += key.size();
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          result += view_text[i];
+          ++i;
+        }
+      }
+      return result;
+    };
 
-    int rus_count = replace_rus_letters(L_text);
-result_text.reserve(rus_count * 2); // Резервируем память под результат
+    int rus_count = count_rus_letters(query_text);
+    result_text.reserve(rus_count * 2);  // Резервируем память под результат
 
+    result_text = transliterate(query_text);
   }
 };
