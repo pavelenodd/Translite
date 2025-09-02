@@ -55,5 +55,5 @@ void Translate::Transliterate(Language lang) {
     return result;
   };
 
-  result_text = transliterate(query_text);
+  result_text_ = transliterate(query_text_);
 }
