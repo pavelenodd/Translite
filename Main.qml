@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 
 Window {
+    id: window
     width: 800
     height: 400
 
@@ -9,15 +10,17 @@ Window {
     title: "Translate"
 
     Column {
-        anchors.centerIn: parent
+        anchors.fill: parent
         spacing: 10
 
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10
+            height: parent.height - 100  // Динамическая высота, оставляя место для кнопки и combo
             ScrollView {
-                width: 200
-                height: 200
+                spacing: 10
+                width: window.width * 0.25  // Динамическая ширина, ~25% от ширины окна
+                height: parent.height
                 TextArea {
                     id: leftField
                     placeholderText: "Поле ввода"
@@ -25,8 +28,9 @@ Window {
                 }
             }
             ScrollView {
-                width: 500
-                height: 200
+                spacing: 10
+                width: window.width * 0.625  // Динамическая ширина, ~62.5% от ширины окна
+                height: parent.height
                 TextArea {
                     id: rightField
                     wrapMode: TextArea.Wrap
