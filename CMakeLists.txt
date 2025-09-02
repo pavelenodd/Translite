@@ -17,7 +17,7 @@ qt_add_executable(${PROJECT_NAME}
 )
 
 qt_add_qml_module(${PROJECT_NAME}
-	URI MinimalQml # URI модуля должен не совпадать с именем проекта
+	URI Transliterator # URI модуля должен не совпадать с именем проекта
 	QML_FILES # QML файлы модуля
 	Main.qml
 )
