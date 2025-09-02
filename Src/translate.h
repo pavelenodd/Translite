@@ -1,5 +1,7 @@
 #pragma once
+#include <QDebug>
 #include <algorithm>
+#include <iostream>
 #include <string>
 #include <string_view>
 
@@ -20,22 +22,33 @@ class Translate {
     return result_text;
   }
 
-  void Transliterate() {
+  void Transliterate(bool is_russian = true) {
     // подсчёт веса сложных русских букв
-    auto count_rus_letters = [this](const std::string& text) -> int {
-      int count = text.size();
-      for (const auto& pair : data_.rus_letter_weight) {
-        const std::string& c = pair.first;
-        int weight = pair.second;
+    auto count_rus_letters = [this](std::string_view view_text) -> int {
+      int count = view_text.size();
+      for (const auto& [key, value] : data_.rus_letter_weight) {
         size_t pos = 0;
-        while ((pos = text.find(c, pos)) != std::string::npos) {
-          count += (weight - 1);  // -1 потому что буква уже учтена в размере строки
-          pos += c.size();
+        while ((pos = view_text.find(key, pos)) != std::string::npos) {
+          count += (value - 1);  // -1 потому что буква уже учтена в размере строки
+          pos += key.size();
         }
       }
       return count;
     };
-
+    auto count_eng_letters = [this](std::string text) -> int {
+      int count = text.size();
+      int i = 0;
+      for (const auto& [key, value] : data_.eng_letter_weight) {
+        ++i;
+        size_t pos = 0;
+        while ((pos = text.find(key, pos)) != std::string::npos) {
+          count += (value + 1);  // -1 потому что буква уже учтена в размере строки
+          text.replace(pos, key.size(), "");
+          pos += key.size();
+        }
+      }
+      return count;
+    };
     auto transliterate = [this](std::string_view view_text) -> std::string {
       std::string result;
       for (size_t i = 0; i < view_text.size();) {
@@ -56,8 +69,8 @@ class Translate {
       return result;
     };
 
-    int rus_count = count_rus_letters(query_text);
-    result_text.reserve(rus_count * 2);  // Резервируем память под результат
+    int text_count = is_russian ? count_rus_letters(query_text)
+                                : count_eng_letters(query_text);
 
     result_text = transliterate(query_text);
   }

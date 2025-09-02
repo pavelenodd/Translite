@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include "qdebug.h"
-#include "qlogging.h"
+#include <iostream>
+
 #include "translate.h"
 
 int main(int argc, char *argv[]) {
@@ -10,18 +10,18 @@ QGuiApplication app(argc, argv);
 QQmlApplicationEngine engine;
 
 Translate translator;
-qDebug() <<"Query text example: \"shchuchiy khvost\"";
+
+std::cerr << "Query text example: \"Щучий хвост\" ";
+translator.GetQueryText("Щучий хвост");
+translator.Transliterate(true);
+
+std::cerr << "Translated text: " << translator.GetResultText() << std::endl;
+
+std::cerr << "Query text example: \"shchuchiy khvost\" ";
 translator.GetQueryText("shchuchiy khvost");
-translator.Transliterate();
-QString result = QString::fromStdString(translator.GetResultText());
-qDebug() << "Translated text:" << result;
-
-
+translator.Transliterate(false);
+std::cerr << "Translated text: " << translator.GetResultText() << std::endl;
 // engine.loadFromModule(u"MinimalQml", u"Main");
-
-
-
-
 
 return app.exec();
 }
