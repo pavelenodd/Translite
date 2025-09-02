@@ -15,22 +15,23 @@ Window {
         Row {
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 10
-            TextField {
-                
-                id: leftField
-                placeholderText: "Поле ввода"
-                width: 200  
-                height: 40
-                wrapMode: TextArea.Wrap
-                onTextChanged: {
-                    height = Math.max(5, text.length/2 );
+            ScrollView {
+                width: 200
+                height: 200
+                TextArea {
+                    id: leftField
+                    placeholderText: "Поле ввода"
+                    wrapMode: TextArea.Wrap
                 }
             }
-            TextArea {
-                id: rightField
+            ScrollView {
                 width: 500
-                wrapMode: TextArea.Wrap
-                readOnly: true
+                height: 200
+                TextArea {
+                    id: rightField
+                    wrapMode: TextArea.Wrap
+                    readOnly: true
+                }
             }
         }
 
